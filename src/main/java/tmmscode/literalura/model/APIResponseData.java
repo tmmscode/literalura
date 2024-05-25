@@ -8,7 +8,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record APIResponseData(
         int count,
-        @JsonAlias("results") List<ResultsData> bookAuthorInfo
+        @JsonAlias("results") List<ResultsData> bookAndAuthorInfo
 
 ) {
 }

@@ -13,4 +13,12 @@ public record ResultsData(
         List<String> languages,
         int download_count
 ) {
+    @Override
+    public String toString() {
+        return "API ID: " + apiBookID +
+                " | Título: " + title +
+                " | Autor: " + authors +
+                " | Idioma: " + languages +
+                " | Downloads: " + download_count;
+    }
 }
