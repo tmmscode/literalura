@@ -11,7 +11,7 @@ public record ResultsData(
         String title,
         List<AuthorsData> authors,
         List<String> languages,
-        int download_count
+        Long download_count
 ) {
     @Override
     public String toString() {

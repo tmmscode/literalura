@@ -2,23 +2,34 @@ package tmmscode.literalura.main;
 
 import tmmscode.literalura.helpers.MenuPrinter;
 import tmmscode.literalura.model.APIResponseData;
+import tmmscode.literalura.model.Author;
+import tmmscode.literalura.model.Book;
 import tmmscode.literalura.model.ResultsData;
+import tmmscode.literalura.repository.AuthorRepository;
+import tmmscode.literalura.repository.BookRepository;
 import tmmscode.literalura.service.APIRequest;
 import tmmscode.literalura.service.ConvertData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
+    private BookRepository bookRepository;
+    private AuthorRepository authorRepository;
     private final String requestBooksAddress = "https://gutendex.com/books/?search=";
     private final String requestBooksByIdAddress = "https://gutendex.com/books/?ids=";
     private final Scanner keyboardInput = new Scanner(System.in);
     private final APIRequest apiRequest = new APIRequest();
     private final ConvertData dataConverter = new ConvertData();
 
-    private List<ResultsData> searchedBooks = new ArrayList<>();
     boolean searchingBooks;
+
+    public Main(AuthorRepository authorRepository, BookRepository bookRepository) {
+        this.authorRepository = authorRepository;
+        this.bookRepository = bookRepository;
+    }
 
 
     public void start() {
@@ -40,6 +51,9 @@ public class Main {
                     break;
                 case "5" : showBooksByLanguage();
                     break;
+                case "9" :
+                    testFunction();
+                    break;
                 case "0" :
                     System.out.println("Aplicação feita por Thiago de Melo Marçal da Silva, como desafio da formação \"Oracle Next Education\" (Especialização Back-End)");
                     System.out.println("Obrigado por usar esta aplicação! ♥");
@@ -49,6 +63,10 @@ public class Main {
                     System.out.println("Opção inválida!");
             }
         }
+    }
+
+    private void testFunction() {
+        System.out.println("Nothing to test");
     }
 
     private void searchBookByTitle() {
@@ -128,19 +146,24 @@ public class Main {
     }
 
     private void showAllRegisteredBooks() {
-        if (!searchedBooks.isEmpty()) {
-            MenuPrinter.showEndLine();
-            System.out.println("Lista de livros registrados");
-            searchedBooks.forEach(System.out::println);
+        List<Book> allBooks = bookRepository.findAll();
+
+        if(allBooks.isEmpty()) {
+            System.out.println("Nenhum livro registrado");
         } else {
-            MenuPrinter.showEndLine();
-            System.out.println("Não há livros registrados");
-
+            allBooks.forEach(System.out::println);
         }
-
     }
 
-    private void showAllRegisteredAuthors() {}
+    private void showAllRegisteredAuthors() {
+        List<Author> allAuthors = authorRepository.findAll();
+
+        if(allAuthors.isEmpty()) {
+            System.out.println("Nenhum autor registrado");
+        } else {
+            allAuthors.forEach(System.out::println);
+        }
+    }
 
     private void showAliveAuthorsByYear() {}
 
@@ -157,8 +180,7 @@ public class Main {
 
             switch (userVerification){
                 case "s" :
-                    searchedBooks.add(bookFound);
-                    System.out.println("Livro adicionado!");
+                    registerNewBook(bookFound);
                     userCheck = false;
                     searchingBooks = false;
                     break;
@@ -168,6 +190,53 @@ public class Main {
                     break;
                 default:
                     System.out.println("Opção inválida!");
+            }
+        }
+    }
+
+    private void registerNewBook(ResultsData searchedBook) {
+        Optional<Book> dbBook = bookRepository.findByTitle(searchedBook.title());
+
+        if(dbBook.isPresent()){
+            System.out.println("Esse livro já foi registrado! " + dbBook.get().getTitle());
+        } else {
+            Book newBook;
+
+            if (!searchedBook.authors().isEmpty()) {
+                Optional<Author> dbAuthor = authorRepository.findByName(searchedBook.authors().getFirst().name());
+
+                if (dbAuthor.isPresent()) {
+                    newBook = new Book(searchedBook, dbAuthor.get());
+                    bookRepository.save(newBook);
+                    System.out.printf("Novo livro registrado: %s | Autor: %s\n", newBook.getTitle(), dbAuthor.get().getName());
+                } else {
+                    Author newAuthor = new Author(searchedBook.authors().getFirst());
+                    authorRepository.save(newAuthor);
+                    System.out.println("Novo autor adicionado: " + newAuthor.getName());
+
+                    Optional<Author> newDBAuthor = authorRepository.findByName(newAuthor.getName());
+                    newBook = new Book(searchedBook, newDBAuthor.get());
+                    bookRepository.save(newBook);
+                    System.out.printf("Novo livro adicionado: %s | Autor: %s\n", newBook.getTitle(), newDBAuthor.get().getName());
+                }
+            } else {
+                Author newUnknownAuthor = new Author();
+                newUnknownAuthor.setName("");
+
+                Optional<Author> unknownAuthor = authorRepository.findByName(newUnknownAuthor.getName());
+
+                if(unknownAuthor.isPresent()) {
+                    newBook = new Book(searchedBook, unknownAuthor.get());
+                    bookRepository.save(newBook);
+                    System.out.printf("Novo livro adicionado: %s | Autor: %s\n", newBook.getTitle(), unknownAuthor.get().getName());
+                } else {
+                    authorRepository.save(newUnknownAuthor);
+
+                    Optional<Author> newDBUnknownAuthor = authorRepository.findByName(newUnknownAuthor.getName());
+                    newBook = new Book(searchedBook, newDBUnknownAuthor.get());
+                    bookRepository.save(newBook);
+                    System.out.printf("Novo livro adicionado: %s | Autor: %s\n", newBook.getTitle(), newDBUnknownAuthor.get().getName());
+                }
             }
         }
     }

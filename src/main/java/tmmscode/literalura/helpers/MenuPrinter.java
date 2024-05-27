@@ -24,6 +24,8 @@ public class MenuPrinter {
             4 - Listar autores vivos em um determinado ano
             5 - Listar livros em um determinado idioma
             
+            9 - Testar função (remover depois)
+            
             0 - Sair
             """);
     }
