@@ -1,13 +1,13 @@
 package tmmscode.literalura.model;
 
 import jakarta.persistence.*;
+import tmmscode.literalura.dto.AuthorsData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-//@Table(name = "autores", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
-@Table(name = "autores")
+@Table(name = "autores", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +19,9 @@ public class Author {
     private List<Book> books = new ArrayList<>();
 
     public Author() {}
+    public Author(String name){
+        setName(name);
+    }
     public Author(AuthorsData author) {
         setName(author.name());
         setBirthYear(author.birth_year());

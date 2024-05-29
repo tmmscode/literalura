@@ -1,4 +1,4 @@
-package tmmscode.literalura.model;
+package tmmscode.literalura.dto;
 
 public record AuthorsData (
         String name,

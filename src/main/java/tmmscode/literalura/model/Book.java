@@ -1,9 +1,10 @@
 package tmmscode.literalura.model;
 
 import jakarta.persistence.*;
+import tmmscode.literalura.dto.ResultsData;
 
 @Entity
-@Table(name = "livros", uniqueConstraints = {@UniqueConstraint(columnNames = "title")})
+@Table(name = "livros")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,14 +14,14 @@ public class Book {
     @ManyToOne
     private Author author;
     private String language;
-    private Long download_count;
+    private Long downloadCount;
     private Long apiBookID;
 
     public Book () {}
     public Book (ResultsData book, Author autor) {
         setTitle(book.title());
         setLanguage(book.languages().getFirst());
-        setDownload_count(book.download_count());
+        setDownloadCount(book.download_count());
         setApiBookID(book.apiBookID());
 
         setAuthor(autor);
@@ -58,12 +59,12 @@ public class Book {
         this.language = language;
     }
 
-    public Long getDownload_count() {
-        return download_count;
+    public Long getDownloadCount() {
+        return downloadCount;
     }
 
-    public void setDownload_count(Long download_count) {
-        this.download_count = download_count;
+    public void setDownloadCount(Long downloadCount) {
+        this.downloadCount = downloadCount;
     }
 
     public Long getApiBookID() {
@@ -79,7 +80,7 @@ public class Book {
         return "Título: " + getTitle() +
                 " | Autor: " + getAuthor().getName() +
                 " | Idioma: " + getLanguage() +
-                " | Donwloads: " + getDownload_count() +
+                " | Donwloads: " + getDownloadCount() +
                 " | ID Gutendex: " + getApiBookID()
                 ;
     }

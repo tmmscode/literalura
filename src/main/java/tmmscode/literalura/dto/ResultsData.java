@@ -1,4 +1,4 @@
-package tmmscode.literalura.model;
+package tmmscode.literalura.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -18,13 +18,14 @@ public class MenuPrinter {
             ♦♦♦♦♦ MENU PRINCIPAL ♦♦♦♦♦
             Escolha uma opção:
             
-            1 - Buscar livros pelo título
+            1 - Buscar e registrar livros pelo título (Gutendex API)
             2 - Listar livros registrados
             3 - Listar autores registrados
             4 - Listar autores vivos em um determinado ano
-            5 - Listar livros em um determinado idioma
+            5 - Exibir quantidade e listar livros em um determinado idioma
+            6 - Buscar livros nos registros (por título ou nome do autor)
             
-            9 - Testar função (remover depois)
+            7 - Top 10 dos livros mais baixados
             
             0 - Sair
             """);
